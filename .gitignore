@@ -3,3 +3,4 @@
 /out
 /output-opnsense-*
 opnsense-*.box
+.vagrant-cloud-token
