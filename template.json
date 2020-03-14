@@ -1,0 +1,81 @@
+{
+  "variables": {
+    "vmname": "{{user `VMNAME`}}",
+    "build_id": "opnsense-{{timestamp}}",
+    "cloud_token": "{{ env `VAGRANT_CLOUD_TOKEN` }}",
+    "version": "1.0.{{timestamp}}"
+  },
+  "builders": [
+    {
+      "type": "virtualbox-vm",
+      "name": "{{user `build_id`}}",
+      "vm_name": "{{user `vmname`}}",
+      "attach_snapshot": "clean",
+      "target_snapshot": "provisioned",
+      "force_delete_snapshot": true,
+      "headless": false,
+      "ssh_username": "root",
+      "ssh_password": "opnsense",
+      "boot_wait": "3s",
+      "boot_command": [
+        "<wait10><wait10><wait10><wait10><wait10><wait10>",
+        "<wait10><wait10><wait10><wait10>",
+        "root<enter><wait>",
+        "opnsense<enter>",
+        "<wait>8<enter>",
+        "<wait5>dhclient em0<enter><wait10>",
+        "echo 'PasswordAuthentication yes' >> /usr/local/etc/ssh/sshd_config<enter>",
+        "echo 'PermitRootLogin yes' >> /usr/local/etc/ssh/sshd_config<enter>",
+        "service openssh onestart<enter>"
+      ],
+      "guest_additions_mode": "disable",
+      "vboxmanage": [
+        [ "modifyvm", "{{.Name}}", "--memory", "1024" ],
+        [ "modifyvm", "{{.Name}}", "--cpus", "1" ],
+        [ "modifyvm", "{{.Name}}", "--boot1", "disk" ],
+        [ "modifyvm", "{{.Name}}", "--boot2", "dvd" ],
+        [ "modifyvm", "{{.Name}}", "--audio", "none" ],
+        [ "modifyvm", "{{.Name}}", "--usb", "off" ]
+      ],
+      "post_shutdown_delay": "30s",
+      "vboxmanage_post": [
+        [ "modifyvm", "{{.Name}}", "--nic1", "intnet" ],
+        [ "modifyvm", "{{.Name}}", "--nic2", "nat" ],
+        [ "modifyvm", "{{.Name}}", "--cableconnected2", "on" ],
+        [ "modifyvm", "{{.Name}}", "--natpf2", "managinggui,tcp,127.0.0.1,10443,,443"],
+        [ "modifyvm", "{{.Name}}", "--natpf2", "ssh,tcp,127.0.0.1,10022,,22"]
+      ]
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "config.xml",
+      "destination": "/conf/config.xml"
+    },
+    {
+      "type": "shell",
+      "scripts": [
+        "base.sh"
+      ],
+      "execute_command": "chmod +x {{ .Path }}; /bin/sh -c '{{ .Vars }} {{ .Path }}'"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "vagrant",
+        "compression_level": 9,
+        "vagrantfile_template": "Vagrantfile.tpl",
+        "output": "{{user `build_id`}}_{{.BuildName}}_{{.Provider}}.box"
+      },
+      {
+        "type": "vagrant-cloud",
+        "box_tag": "mcree/opnsense",
+        "access_token": "{{user `cloud_token`}}",
+        "version": "{{user `version`}}",
+        "version_description": "See: https://github.com/mcree/vagrant-opnsense"
+      }
+    ]
+  ]
+}

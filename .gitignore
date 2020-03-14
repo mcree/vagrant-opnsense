@@ -1,0 +1,5 @@
+/build-cache
+/packer_cache
+/out
+/output-opnsense-*
+opnsense-*.box
