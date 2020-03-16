@@ -40,11 +40,15 @@
       "post_shutdown_delay": "30s",
       "vboxmanage_post": [
         [ "modifyvm", "{{.Name}}", "--nic1", "intnet" ],
-        [ "modifyvm", "{{.Name}}", "--nic2", "nat" ],
-        [ "modifyvm", "{{.Name}}", "--cableconnected2", "on" ],
-        [ "modifyvm", "{{.Name}}", "--natpf2", "managinggui,tcp,127.0.0.1,10443,,443"],
-        [ "modifyvm", "{{.Name}}", "--natpf2", "ssh,tcp,127.0.0.1,10022,,22"]
-      ]
+        [ "modifyvm", "{{.Name}}", "--nic2", "intnet" ],
+        [ "modifyvm", "{{.Name}}", "--nic3", "intnet" ],
+        [ "modifyvm", "{{.Name}}", "--nic4", "nat" ],
+        [ "modifyvm", "{{.Name}}", "--cableconnected4", "on" ],
+        [ "modifyvm", "{{.Name}}", "--natpf4", "managinggui,tcp,127.0.0.1,10443,,443"],
+        [ "modifyvm", "{{.Name}}", "--natpf4", "ssh,tcp,127.0.0.1,10022,,22"]
+      ],
+      "shutdown_command": "shutdown -p now",
+      "shutdown_timeout": "30s"
     }
   ],
   "provisioners": [

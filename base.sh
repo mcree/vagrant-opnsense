@@ -3,5 +3,5 @@
 #opnsense-update
 #echo "cleanup"
 #opnsense-update -e
-shutdown -p now
+#shutdown -p now
 #echo 'autoboot_delay="0"' >> /boot/loader.conf
