@@ -4,3 +4,5 @@
 /output-opnsense-*
 opnsense-*.box
 .vagrant-cloud-token
+/test/.vagrant
+/test/ubuntu-bionic-18.04-cloudimg-console.log

@@ -14,18 +14,15 @@ Vagrant.configure(2) do |config|
   config.vm.provider 'virtualbox' do |vb|
     vb.memory = 1024
     vb.cpus = 1
-    vb.gui = false # no need for gui
-    # since opnsense expects nic1 (first) to be LAN, lets make it intnet
-    # nic2 is wan, so we are doing nat ( routed to the host )
-    vb.customize ['modifyvm', :id, '--nic1', 'intnet', '--nic2', 'intnet', '--nic3', 'intnet', '--nic4', 'nat']
-    # we forward the ports to the WebGUI/ssh since we use a nat network
-    #vb.customize ['modifyvm', :id, '--natpf4', "ssh,tcp,127.0.0.1,2222,,22" ] #port forward
-    #vb.customize ['modifyvm', :id, '--natpf4', "https,tcp,127.0.0.1,10443,,443" ] #port forward
+    vb.gui = false # no need for gui - shall be managed via web interface
+    # enable promiscuous mode for work interfaces
+    vb.customize ['modifyvm', :id, '--nicpromisc2', 'allow-all']
+    vb.customize ['modifyvm', :id, '--nicpromisc3', 'allow-all']
+    vb.customize ['modifyvm', :id, '--nicpromisc4', 'allow-all']
   end
 
-  #config.vm.network "private_network", virtualbox__intnet: true, auto_config: false
-  #config.vm.network "private_network", virtualbox__intnet: true, auto_config: false
-  #config.vm.network "private_network", virtualbox__intnet: true, auto_config: false
-  #config.vm.network :forwarded_port, guest: 22, host: 10022, auto_correct: true
-  #config.vm.network :forwarded_port, guest: 443, host: 10443, auto_correct: true
+  config.vm.network :forwarded_port, guest: 443, host: 10443, auto_correct: true
+  config.vm.network "private_network", adapter: 2, virtualbox__intnet: true, auto_config: false
+  config.vm.network "private_network", adapter: 3, virtualbox__intnet: true, auto_config: false
+  config.vm.network "private_network", adapter: 4, virtualbox__intnet: true, auto_config: false
 end

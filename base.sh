@@ -3,5 +3,10 @@
 #opnsense-update
 #echo "cleanup"
 #opnsense-update -e
-#shutdown -p now
-#echo 'autoboot_delay="0"' >> /boot/loader.conf
+echo 'autoboot_delay="0"' >> /boot/loader.conf
+
+#pw useradd -n vagrant -u 0 -c "vagrant" -s /bin/csh -m -w yes
+#pw groupmod wheel -m vagrant
+#pw groupmod admins -m vagrant
+#pw groupmod operator -m vagrant
+#echo '%vagrant ALL=NOPASSWD:ALL' > /usr/local/etc/sudoers.d/vagrant
