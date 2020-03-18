@@ -1,9 +1,10 @@
 # Sample setup for vagrant-opnsense box
 
-## Setup
+## Test environment
 
-The setup contains an OPNSense based firewall
-with three zones (WAN, LAN and DMZ).
+The test environment contains an OPNSense based firewall
+with three zones (WAN, LAN and DMZ). Details are described
+in the [Vagrantfile](Vagrantfile)
 
 A workstation (running windows 10) is conntected
 to the LAN zone, while a server (running ubuntu)
@@ -49,3 +50,32 @@ VMs on the simulated network infrastructure in order
 to prevent the default Vagrant NAT interfaces to
 distract traffic.
  
+ ## Usage
+ 
+Download and install external requirements:
+ 
+ * [Vagrant](https://www.vagrantup.com/downloads.html)
+ * [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+ * [git](https://git-scm.com/downloads) (default options can be accepted during installation)
+ 
+Launch a terminal then enter the following commands:
+
+```shell script
+git clone https://github.com/mcree/vagrant-opnsense.git
+cd vagrant-opnsense
+cd test
+vagrant up
+```
+
+Then have a break. :)
+
+After 10-20 minutes, all three VMs should be up and running.
+
+### Access
+
+Users and passwords for the VMs:
+
+- **fw**: root / opnsense (web ui is exported to the host machine as: https://127.0.0.1:10443/)
+- **lanws**: vagrant / vagrant (use virtualbox UI or ```vagrant rdp lanws```)
+- **dmzsrv**: vagrant / vagrant (use virtualbox UI or ```vagrant ssh dmzsrv```)
+

@@ -1,5 +1,7 @@
+# Multi machine Vagrant configuration
 Vagrant.configure(2) do |config|
 
+  # Firewall VM
   config.vm.define :fw do |fw|
     fw.vm.box = "mcree/opnsense"
 
@@ -8,6 +10,8 @@ Vagrant.configure(2) do |config|
       vb.cpus = 1
       vb.gui = true # want gui for testing
       #vb.customize ['modifyvm', :id, '--nic1', 'nat'] # don't touch this interface!
+
+      # Setup firewall port assignments
       vb.customize ['modifyvm', :id, '--nic2', 'intnet']
       vb.customize ['modifyvm', :id, '--intnet2', 'LAN']
       vb.customize ['modifyvm', :id, '--nic3', 'nat']
@@ -16,10 +20,11 @@ Vagrant.configure(2) do |config|
       vb.customize ['modifyvm', :id, '--intnet4', 'DMZ']
     end
 
-    fw.vm.provision "file", source: "config.xml", destination: "/conf/config.xml"
+    fw.vm.provision "file", source: "config.xml", destination: "/conf/config.xml" # copy default config to firewall
     fw.vm.provision "shell", inline: "opnsense-shell reload" # apply configuration
   end
 
+  # LAN Workstation VM
   config.vm.define :lanws do |lanws|
     lanws.vm.box = "gusztavvargadr/windows-10"
     lanws.vm.provider 'virtualbox' do |vb|
@@ -27,11 +32,14 @@ Vagrant.configure(2) do |config|
       vb.cpus = 2
       vb.gui = true # want gui for testing
     end
+    # Network port assignment
     lanws.vm.network "private_network", type: "dhcp", virtualbox__intnet: "LAN"
 
+    # Prefer routing on the private network (increase metric of Vagrant's default NAT interface)
     lanws.vm.provision "shell", inline: "Get-NetIPInterface -InterfaceAlias Ethernet | Set-NetIPInterface -InterfaceMetric 2000 -AdvertiseDefaultRoute Disabled -Forwarding Disabled -RouterDiscovery Disabled -IgnoreDefaultRoutes Enabled"
   end
 
+  # DMZ Server VM
   config.vm.define :dmzsrv do |dmzsrv|
     dmzsrv.vm.box = "ubuntu/bionic64"
     dmzsrv.vm.provider 'virtualbox' do |vb|
@@ -39,8 +47,10 @@ Vagrant.configure(2) do |config|
       vb.cpus = 1
       vb.gui = true # want gui for testing
     end
+    # Network port assignment
     dmzsrv.vm.network "private_network", type: "dhcp", virtualbox__intnet: "DMZ"
 
+    # Disable automatically acquired default gateway on Vagrant's default NAT interface
     dmzsrv.vm.provision "shell", inline: "cp /vagrant/ubuntu-netplan.yaml /etc/netplan/90-disable-double-gw.yaml && netplan apply"
   end
 
