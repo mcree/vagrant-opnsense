@@ -1,6 +1,9 @@
 # Multi machine Vagrant configuration
 Vagrant.configure(2) do |config|
 
+  config.winrm.timeout = 120
+  config.winrm.retry_limit = 100
+
   # Firewall VM
   config.vm.define :fw do |fw|
     fw.vm.box = "mcree/opnsense"
