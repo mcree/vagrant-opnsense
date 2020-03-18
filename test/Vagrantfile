@@ -33,7 +33,7 @@ Vagrant.configure(2) do |config|
       vb.gui = true # want gui for testing
     end
 
-    config.vm.boot_timeout = 1200
+    lanws.vm.boot_timeout = 1200
 
     # Network port assignment
     lanws.vm.network "private_network", type: "dhcp", virtualbox__intnet: "LAN"
