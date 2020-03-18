@@ -2,13 +2,13 @@
 
 ## Test environment
 
-The test environment contains an OPNSense based firewall
-with three zones (WAN, LAN and DMZ). Details are described
-in the [Vagrantfile](Vagrantfile)
-
-A workstation (running windows 10) is conntected
-to the LAN zone, while a server (running ubuntu)
+The test environment contains an OPNSense based 
+firewall (name: **fw**)
+with three zones (WAN, LAN and DMZ). 
+A Windows 10 workstation (name: **lanws**) is conntected
+to the LAN zone, while an Ubuntu based server (name: **dmzsrv**)
 is connected to the DMZ zone.
+Configuration is described in the [Vagrantfile](Vagrantfile)
 
 The networks are set up as the following:
 
@@ -21,7 +21,7 @@ The networks are set up as the following:
   * **fw** is acting as a DHCP server and default gateway
   * **lanws** is acting as a DHCP client
 * *DMZ* is another VirtualBox internal network with the same name ("DMZ")
-  * **fw** and ubuntu server (**dmzsrv**) is connected to this network
+  * **fw** and Ubuntu server (**dmzsrv**) is connected to this network
   * **fw** is acting as a DHCP server and default gateway
   * **dmzsrv** is acting as a DHCP client
 
@@ -35,8 +35,8 @@ port forwarding rules.
 
 For this reason special configuration steps are in place for
 "first" interfaces on all VMs:
-* interface *em0* on **fw** is configured
-  as a DHCP client with the name VAGRANT. Default gateway
+* interface *em0* on **fw** with the name *VAGRANT* is configured
+  as a DHCP client. Default gateway
   is disabled on this interface and all traffic is let in.
 * interface *Ethernet* on **lanws** is configured with a 
   large default metric, so all traffic is routed towards
