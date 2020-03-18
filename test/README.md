@@ -15,7 +15,6 @@ The networks are set up as the following:
 * *WAN* is a VirtualBox based NAT network
   * Only the firewall (**fw**) is connected to this network
   * **fw** is configured as a DHCP client
-  * Firewall
 * *LAN* is a VirtualBox internal network with the same name ("LAN")
   * **fw** and windows 10 workstation (**lanws**) is connected to
     this network
